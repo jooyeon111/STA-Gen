@@ -3,15 +3,18 @@ package STA_Gen.OutputStationary
 import chisel3._
 import chiseltest._
 import org.scalatest.flatspec.AnyFlatSpec
-import STA_Gen.{GemmDimension, SramHexFileWriter, Mapper}
+import STA_Gen.{ConfigurationParser, GemmDimension, Mapper, SramHexFileWriter, GemmDimensionParser}
 import STA_Gen.Submodule.SystolicTensorArrayConfig
 
 class SystolicPodSimulationAutomaticTest extends AnyFlatSpec with ChiselScalatestTester   {
   behavior of "Systolic pod"
   it should "calculate GEMMs {M,N,K} with config {array row, array col, block row, block col, vector size} systolic tensor array" in {
 
-    val targetGemm = GemmDimension(32,32,8)
-    val targetConfiguration = SystolicTensorArrayConfig(4,4,1,1,4)
+    val configurationParser = new ConfigurationParser
+    val gemmDimensionParser = new GemmDimensionParser
+
+    val targetConfiguration = configurationParser.systolicTensorArrayConfig
+    val targetGemm = gemmDimensionParser.gemmDimension
 
     val mapper = new Mapper(targetGemm, targetConfiguration)
     val taskVector = mapper.taskVector
