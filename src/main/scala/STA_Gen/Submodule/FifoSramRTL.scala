@@ -8,16 +8,16 @@ class FifoSramRTL(wordSize: Int = 8) extends Module {
   val io = IO(new Bundle {
 
     val writeEnable = Input(Bool())
-    val writeData = Input(UInt(wordSize.W))
+    val writeData = Input(SInt(wordSize.W))
 
     val readEnable = Input(Bool())
-    val readData = Output(UInt(wordSize.W))
+    val readData = Output(SInt(wordSize.W))
 
   })
 
   //TODO logics that can handle various number of words size
   val numberOfWords: Int = 256
-  val mem = SyncReadMem(numberOfWords, UInt(wordSize.W))
+  val mem = SyncReadMem(numberOfWords, SInt(wordSize.W))
 
   val readPtr = RegInit(0.U(log2Ceil(numberOfWords)))
   val writePtr = RegInit(0.U(log2Ceil(numberOfWords)))
@@ -25,6 +25,8 @@ class FifoSramRTL(wordSize: Int = 8) extends Module {
 
   val full = Wire(Bool())
   val empty = Wire(Bool())
+
+  io.readData := 0.S(wordSize.W)
 
   when(io.writeEnable && !full) {
     mem(writePtr) := io.writeData

@@ -9,10 +9,10 @@ class FifoSramInputVectorRTL(arrayDimension: Int, blockDimension: Int, vectorSiz
   val io = IO(new Bundle {
 
     val writeEnable = Input(Bool())
-    val writeData = Input(UInt(8.W))
+    val writeData = Input(Vec(numberOfInputPorts, SInt(8.W)))
 
     val readEnable = Input(Bool())
-    val readData = Output(UInt(8.W))
+    val readData = Output(Vec(numberOfInputPorts, SInt(8.W)))
 
   })
 
@@ -26,7 +26,7 @@ class FifoSramInputVectorRTL(arrayDimension: Int, blockDimension: Int, vectorSiz
 
   for(i <- 0 until numberOfInputPorts){
     io.readData(i) := sramVector(i).io.readData
-    io.writeData(i) := sramVector(i).io.writeData
+    sramVector(i).io.writeData := io.writeData(i)
   }
 
 

@@ -4,11 +4,11 @@ import STA_Gen.Submodule.{FifoSramInputVectorRTL, SkewBufferVector, SystolicTens
 
 import chisel3._
 
-class SystolicPodRTL( val arrayRow: Int, val arrayCol: Int, val blockRow: Int, val blockCol: Int, val vectorSize: Int, taskQueueEntries: Int, shapeModifierEntries: Int) extends Module {
+class SystolicPodRTL( val arrayRow: Int, val arrayCol: Int, val blockRow: Int, val blockCol: Int, val vectorSize: Int, taskQueueEntries: Int) extends Module {
 
-  def this(arrayConfig: SystolicTensorArrayConfig, taskQueueEntries: Int, shapeModifierEntries: Int) = this(arrayConfig.arrayRow, arrayConfig.arrayCol, arrayConfig.blockRow, arrayConfig.blockCol, arrayConfig.vectorSize, taskQueueEntries, shapeModifierEntries)
+  def this(arrayConfig: SystolicTensorArrayConfig, taskQueueEntries: Int) = this(arrayConfig.arrayRow, arrayConfig.arrayCol, arrayConfig.blockRow, arrayConfig.blockCol, arrayConfig.vectorSize, taskQueueEntries)
 
-  override val desiredName = s"OsSystolicPodSimulation${arrayRow}x${arrayCol}x${blockRow}x${blockCol}x$vectorSize"
+  override val desiredName = s"OsSystolicPodRTL${arrayRow}x${arrayCol}x${blockRow}x${blockCol}x$vectorSize"
 
   require(arrayRow >= 1, "[error] Array row must be at least 1")
   require(arrayCol >= 1, "[error] Array col must be at least 1")
@@ -19,7 +19,7 @@ class SystolicPodRTL( val arrayRow: Int, val arrayCol: Int, val blockRow: Int, v
 
   val numberOfInputA: Int = arrayRow * blockRow * vectorSize
   val numberOfInputB: Int = arrayCol * blockCol * vectorSize
-  val numberOfOutputs: Int = arrayRow * blockRow
+  val numberOfOutputs: Int = arrayRow * blockRow * blockCol
 
   val io = IO(new Bundle {
 
@@ -47,8 +47,13 @@ class SystolicPodRTL( val arrayRow: Int, val arrayCol: Int, val blockRow: Int, v
   controlLogic.io.queueValid := io.queueValid
   io.queueReady := controlLogic.io.queueReady
 
-  fifoSramVectorA.io.readData := io.inputA
-  fifoSramVectorA.io.readData := io.inputB
+  fifoSramVectorA.io.writeData := io.inputA
+  fifoSramVectorB.io.writeData := io.inputB
+
+  fifoSramVectorA.io.writeEnable := true.B
+  fifoSramVectorA.io.readEnable := true.B
+  fifoSramVectorB.io.writeEnable := true.B
+  fifoSramVectorB.io.readEnable := true.B
 
   skewBufferA.io.input := fifoSramVectorA.io.readData
   skewBufferB.io.input := fifoSramVectorB.io.readData
