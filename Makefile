@@ -7,3 +7,4 @@ test:
 	sbt "test"
 
 clean:
+	rm *.json *.v

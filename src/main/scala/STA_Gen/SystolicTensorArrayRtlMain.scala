@@ -1,8 +1,6 @@
 package STA_Gen
 
-import STA_Gen.OutputStationary.SystolicPodRTL
 import circt.stage.ChiselStage
-//import STA_Gen.WeightStationary.SystolicPodRTL
 
 object SystolicTensorArrayRtlMain extends App{
 
