@@ -41,4 +41,11 @@ class GemmDimensionParser {
   val gemmDimension = GemmDimension(M, N, K)
 
 
+  def getM: Int = M
+
+  def getN: Int = N
+
+  def getK: Int = K
+
+
 }

@@ -51,4 +51,17 @@ class ConfigurationParser {
 
   def getDataflow: String = dataflow
 
+
+  def getM: Int = M
+
+  def getN: Int = N
+
+  def getA: Int = A
+
+  def getB: Int = B
+
+  def getC: Int = C
+
+
+
 }

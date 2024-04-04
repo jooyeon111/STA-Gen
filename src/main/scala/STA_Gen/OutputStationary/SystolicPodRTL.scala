@@ -4,9 +4,17 @@ import STA_Gen.Submodule.{FifoSramInputVectorRTL, SkewBufferVector, SystolicTens
 
 import chisel3._
 
-class SystolicPodRTL( val arrayRow: Int, val arrayCol: Int, val blockRow: Int, val blockCol: Int, val vectorSize: Int, taskQueueEntries: Int) extends Module {
+class SystolicPodRTL(
+  val arrayRow: Int,
+  val arrayCol: Int,
+  val blockRow: Int,
+  val blockCol: Int,
+  val vectorSize: Int,
+  taskQueueEntries: Int
+) extends Module {
 
-  def this(arrayConfig: SystolicTensorArrayConfig, taskQueueEntries: Int) = this(arrayConfig.arrayRow, arrayConfig.arrayCol, arrayConfig.blockRow, arrayConfig.blockCol, arrayConfig.vectorSize, taskQueueEntries)
+  def this(arrayConfig: SystolicTensorArrayConfig, taskQueueEntries: Int) =
+    this(arrayConfig.arrayRow, arrayConfig.arrayCol, arrayConfig.blockRow, arrayConfig.blockCol, arrayConfig.vectorSize, taskQueueEntries)
 
   override val desiredName = s"OsSystolicPodRTL${arrayRow}x${arrayCol}x${blockRow}x${blockCol}x$vectorSize"
 
