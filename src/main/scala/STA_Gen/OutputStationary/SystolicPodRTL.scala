@@ -16,7 +16,7 @@ class SystolicPodRTL(
   def this(arrayConfig: SystolicTensorArrayConfig, taskQueueEntries: Int) =
     this(arrayConfig.arrayRow, arrayConfig.arrayCol, arrayConfig.blockRow, arrayConfig.blockCol, arrayConfig.vectorSize, taskQueueEntries)
 
-  override val desiredName = s"OsSystolicPodRTL${arrayRow}x${arrayCol}x${blockRow}x${blockCol}x$vectorSize"
+  override val desiredName = s"Os_Systolic_Tensor_Array_${arrayRow}x${arrayCol}x${blockRow}x${blockCol}x$vectorSize"
 
   require(arrayRow >= 1, "[error] Array row must be at least 1")
   require(arrayCol >= 1, "[error] Array col must be at least 1")
@@ -31,10 +31,12 @@ class SystolicPodRTL(
 
   val io = IO(new Bundle {
 
+    //Task Queue
     val queueTask = Input(new Task)
     val queueValid = Input(Bool())
     val queueReady = Output(Bool())
 
+    //Input and Output
     val inputA: Vec[SInt] = Input(Vec(numberOfInputA, SInt(8.W)))
     val inputB: Vec[SInt] = Input(Vec(numberOfInputB, SInt(8.W)))
     val output: Vec[SInt] = Output(Vec(numberOfOutputs, SInt(32.W)))
@@ -78,20 +80,12 @@ class SystolicPodRTL(
   fifoSramVectorA.io.readEnable := controlLogic.io.inputASramReadEnable
   fifoSramVectorB.io.readEnable := controlLogic.io.inputBSramReadEnable
 
-//  for (i <- 0 until arrayRow)
-//    skewBufferA.io.shiftEnable(i) := controlLogic.io.skewBufferEnableA
-
-//  for (i <- 0 until arrayCol)
-//    skewBufferB.io.shiftEnable(i) := controlLogic.io.skewBufferEnableB
-
   //Systolic array control wiring
   systolicTensorArray.io.partialSumReset := controlLogic.io.partialSumReset
   systolicTensorArray.io.propagateSignal := controlLogic.io.propagateSignal
 
   //Dimension align module control wiring
   PostProcessModule.io.outputSelectionSignal := controlLogic.io.outputSelectionSignal
-//  PostProcessModule.io.deskewShiftEnable := controlLogic.io.deskewShiftEnable
   PostProcessModule.io.railwayMuxStartSignal := controlLogic.io.railwayMuxStartSignal
-//  PostProcessModule.io.shapeModifier4InputValid := controlLogic.io.shapeModifier4InputValid
 
 }

@@ -1,16 +1,15 @@
 package STA_Gen.OutputStationary
 
 import chisel3._
-import STA_Gen.Submodule.SystolicTensorArrayConfig
-import STA_Gen.{GemmDimension, ShowHardwareWiring}
+import STA_Gen.ShowHardwareWiring
 
 class BlockPE (blockRow : Int, blockCol : Int, vectorSize : Int, inputCFlag : Boolean)  extends Module{
 
-  require(blockRow >= 1, "[ERROR] Block row must be at least 1")
-  require(blockCol >= 1, "[ERROR] Block col must be at least 1")
-  require(vectorSize >= 1, "[ERROR] Number of multiplier inside of processing elements must be at least 1")
+  require(blockRow >= 1, "[error] Block row must be at least 1")
+  require(blockCol >= 1, "[error] Block col must be at least 1")
+  require(vectorSize >= 1, "[error] Number of multiplier inside of processing elements must be at least 1")
 
-  override val desiredName = s"OutputStationaryBlockPE${blockRow}x${blockCol}x${vectorSize}"
+  override val desiredName = s"Os_Block_PE_${blockRow}x${blockCol}x${vectorSize}"
 
   val numberOfInputA: Int = vectorSize * blockRow
   val numberOfInputB: Int = vectorSize * blockCol
@@ -18,13 +17,16 @@ class BlockPE (blockRow : Int, blockCol : Int, vectorSize : Int, inputCFlag : Bo
 
   val io = IO(new Bundle {
 
+    //Input
     val inputA: Vec[SInt] = Input(Vec(numberOfInputA, SInt(8.W)))
     val inputB: Vec[SInt] = Input(Vec(numberOfInputB, SInt(8.W)))
     val inputC = if(inputCFlag) Some(Input(Input(Vec(numberOfPEs, SInt(32.W))))) else None
 
-    val propagateSignal = if(inputCFlag) Some( Input(Bool() ) )else None
+    //Control
+    val propagateSignal = if(inputCFlag) Some( Input(Bool() ) ) else None
     val partialSumReset: Bool = Input(Bool())
 
+    //Output
     val outputA: Vec[SInt] = Output(Vec(numberOfInputA, SInt(8.W)))
     val outputB: Vec[SInt] = Output(Vec(numberOfInputB, SInt(8.W)))
     val outputC: Vec[SInt] = Output(Vec(numberOfPEs, SInt(32.W)))
@@ -73,26 +75,6 @@ class BlockPE (blockRow : Int, blockCol : Int, vectorSize : Int, inputCFlag : Bo
     println()
     println("wiring output")
   }    
-
-
-//  for(j <-0 until blockCol){
-//    PE2DVector(0)(j).io.inputC := io.inputC(j)
-//    if (ShowHardwareWiring.switch)
-//      println(s"PE2DVector(0)($j).io.inputC = io.inputC($j)")
-//  }
-//
-//  for( i <- 1 until blockRow )
-//    for (j <- 0 until blockCol){
-//        PE2DVector(i)(j).io.inputC := PE2DVector(i - 1)(j).io.outputC
-//        if (ShowHardwareWiring.switch)
-//          println(s"PE2DVector($i)($j).io.inputC := PE2DVector(${i - 1})($j).io.outputC")
-//    }
-//
-//  for (j <- 0 until blockCol){
-//    io.outputC(j) := PE2DVector(blockRow - 1)(j).io.outputC
-//    if (ShowHardwareWiring.switch)
-//      println(s"io.outputC($j) := PE2DVector(${blockRow - 1})($j).io.outputC")
-//  }
 
   val outputCRegisterVec = RegInit(VecInit(Seq.fill(numberOfPEs)(0.S(32.W))))
 

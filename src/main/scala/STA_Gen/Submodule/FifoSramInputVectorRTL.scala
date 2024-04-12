@@ -28,6 +28,5 @@ class FifoSramInputVectorRTL(arrayDimension: Int, blockDimension: Int, vectorSiz
     io.readData(i) := sramVector(i).io.readData
     sramVector(i).io.writeData := io.writeData(i)
   }
-
-
+  
 }

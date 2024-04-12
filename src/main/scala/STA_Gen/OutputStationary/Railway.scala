@@ -20,12 +20,9 @@ class Railway(arrayRow: Int, arrayCol: Int, blockRow: Int, blockCol: Int) extend
   val numberOfOutputs: Int = arrayRow * blockRow * blockCol
 
 
-//  assert(muxSignalBits >= 1, "[error] mux signal bis must need at least 1")
-
   val io = IO(new Bundle {
     val input: Vec[SInt] = Input(Vec(numberOfInputs, SInt(32.W)))
     val start = Input(Bool())
-//    val railwayMuxSignal: UInt = Input(UInt(muxSignalBits.W))
     val output: Vec[SInt] = Output(Vec(numberOfOutputs, SInt(32.W)))
   })
 

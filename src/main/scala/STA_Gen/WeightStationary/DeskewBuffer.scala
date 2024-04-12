@@ -1,6 +1,5 @@
 package STA_Gen.WeightStationary
 
-import STA_Gen.Submodule.MyShiftRegister
 import chisel3._
 import chisel3.util.ShiftRegister
 

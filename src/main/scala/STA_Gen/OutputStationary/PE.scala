@@ -1,19 +1,23 @@
 package STA_Gen.OutputStationary
 
-import STA_Gen.Submodule.MAC
 import chisel3._
+import STA_Gen.Submodule.MAC
 
 class PE(val vectorSize : Int) extends Module {
   require(vectorSize >= 1, "[error] Number of multiplier inside of processing elements must be at least 1")
     
-  override val desiredName = s"OSPEAdderTree$vectorSize"
+  override val desiredName = s"Os_PE_$vectorSize"
 
   val io = IO (new Bundle {
 
+    //Input
     val inputA: Vec[SInt] = Input(Vec(vectorSize,SInt(8.W)))
     val inputB: Vec[SInt] = Input(Vec(vectorSize,SInt(8.W)))
+
+    //Control
     val partialSumReset: Bool = Input(Bool())
 
+    //Output
     val outputC: SInt = Output(SInt(32.W))
 
   })

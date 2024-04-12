@@ -11,7 +11,7 @@ class SystolicPodSimulation(
     this(arrayConfig.arrayRow, arrayConfig.arrayCol, arrayConfig.blockRow, arrayConfig.blockCol, arrayConfig.vectorSize, taskQueueEntries, shapeModifierEntries, sramHexDirectoryName = sramHexDirectoryName)
 
 
-  override val desiredName = s"OsSystolicPodSimulation${arrayRow}x${arrayCol}x${blockRow}x${blockCol}x$vectorSize"
+  override val desiredName = s"Os_Systolic_Tensor_Array_${arrayRow}x${arrayCol}x${blockRow}x${blockCol}x$vectorSize"
 
   require(arrayRow >= 1, "[error] Array row must be at least 1")
   require(arrayCol >= 1, "[error] Array col must be at least 1")
@@ -55,24 +55,15 @@ class SystolicPodSimulation(
   io.output := PostProcessModule.io.output
 
   //Control signal wiring
-  //SRAM and skew buffer wiring
   fifoSramVectorA.io.readEnable := controlLogic.io.inputASramReadEnable
   fifoSramVectorB.io.readEnable := controlLogic.io.inputBSramReadEnable
-
-//  for (i <- 0 until arrayRow)
-//    skewBufferA.io.shiftEnable(i) := controlLogic.io.skewBufferEnableA
-//
-//  for (i <- 0 until arrayCol)
-//    skewBufferB.io.shiftEnable(i) := controlLogic.io.skewBufferEnableB
 
   //Systolic array control wiring
   systolicTensorArray.io.partialSumReset := controlLogic.io.partialSumReset
   systolicTensorArray.io.propagateSignal := controlLogic.io.propagateSignal
 
-  //Dimension align module control wiring
+
   PostProcessModule.io.outputSelectionSignal := controlLogic.io.outputSelectionSignal
-//  PostProcessModule.io.deskewShiftEnable := controlLogic.io.deskewShiftEnable
   PostProcessModule.io.railwayMuxStartSignal := controlLogic.io.railwayMuxStartSignal
-//  PostProcessModule.io.shapeModifier4InputValid := controlLogic.io.shapeModifier4InputValid
 
 }

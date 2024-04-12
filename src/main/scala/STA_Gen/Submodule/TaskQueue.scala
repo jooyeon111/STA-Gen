@@ -9,9 +9,6 @@ class TaskQueue(entries: Int) extends Module {
 
   val io = IO(new Bundle {
 
-//    val input = Flipped(Decoupled(new Task))
-//    val output = Decoupled(new Task)
-
     val inputTask = Input(new Task)
     val inputValid = Input(Bool())
     val inputReady = Output(Bool())

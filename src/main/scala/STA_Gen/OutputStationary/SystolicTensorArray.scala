@@ -15,7 +15,7 @@ class SystolicTensorArray(val arrayRow: Int, val arrayCol : Int, val blockRow : 
   require(blockCol >= 1, "[error] Block col must be at least 1")
   require(vectorSize >= 1,  "[error] Number of multiplier inside of processing elements must be at least 1")
 
-  override val desiredName = s"Os_Sta_${arrayRow}x${arrayCol}x${blockRow}x${blockCol}x$vectorSize"
+  override val desiredName = s"Os_Systolic_Tensor_Array_${arrayRow}x${arrayCol}x${blockRow}x${blockCol}x$vectorSize"
 
   val numberOfInputA : Int = arrayRow * blockRow * vectorSize
   val numberOfInputB : Int = arrayCol * blockCol * vectorSize
@@ -24,12 +24,15 @@ class SystolicTensorArray(val arrayRow: Int, val arrayCol : Int, val blockRow : 
 
   val io = IO(new Bundle {
 
+    //Input
     val inputA: Vec[SInt] = Input(Vec(numberOfInputA,SInt(8.W)))
     val inputB: Vec[SInt] = Input(Vec(numberOfInputB,SInt(8.W)))
 
+    //Control
     val propagateSignal: Vec[Vec[Bool]] =  Input(Vec(arrayRow - 1, Vec(arrayCol - 1, Bool())))
     val partialSumReset: Vec[Vec[Bool]] =  Input(Vec(arrayRow, Vec(arrayCol, Bool())))
 
+    //Output
     val outputC: Vec[SInt] = Output(Vec(numberOfOutputs,SInt(32.W)))
 
   })
@@ -115,40 +118,6 @@ class SystolicTensorArray(val arrayRow: Int, val arrayCol : Int, val blockRow : 
     println()
     println("wiring output")
   }
-
-//  for(i <- 0 until arrayRow; j <- 0 until arrayCol; k <- 0 until numberOfPEs) {
-//
-//    if(i == 0 && j == 0){
-//      io.outputC(k) := systolicBlock2DVector(i)(j).io.outputC(k)
-//      if (ShowHardwareWiring.switch)
-//        println(s"io.outputC($k) := systolicBlock2DVector($i)($j).io.outputC($k)")
-//    }
-//
-//    if( (0 < i && i < arrayRow && j == 0) || ( i == arrayRow - 1 && 0 < j &&  j < arrayCol - 1) ){
-//      io.outputC(i*numberOfPEs + j * numberOfPEs + k) := systolicBlock2DVector(i)(j).io.outputC(k)
-//      if (ShowHardwareWiring.switch)
-//        println(s"io.outputC(${i*numberOfPEs + j *numberOfPEs + k}) := systolicBlock2DVector($i)($j).io.outputC($k)")
-//
-//    }
-//
-//    if( i == arrayRow - 1 && j == arrayCol - 1){
-//      io.outputC(i*numberOfPEs + j * numberOfPEs + k) := systolicBlock2DVector(i)(j).io.outputC(k)
-//      if (ShowHardwareWiring.switch)
-//        println(s"io.outputC(${i*numberOfPEs + j *numberOfPEs + k}) := systolicBlock2DVector($i)($j).io.outputC($k)")
-//    }
-//
-//    if( (0 <= i && i < arrayRow - 1 && j == arrayCol - 1) || (i == 0 && 0 < j && j < arrayCol - 1)){
-//      systolicBlock2DVector(i + 1)(j - 1).io.inputC.get(k) := systolicBlock2DVector(i)(j).io.outputC(k)
-//      if (ShowHardwareWiring.switch)
-//        println(s"systolicBlock2DVector(${i + 1})(${j - 1}).io.outputC($k) := systolicBlock2DVector($i)($j).io.outputC($k)")
-//    }
-//
-//    if (0 < i  &&  i< arrayRow - 1 && 0< j && j < arrayCol - 1) {
-//      systolicBlock2DVector(i + 1)(j - 1).io.inputC.get(k) := systolicBlock2DVector(i)(j).io.outputC(k)
-//      if (ShowHardwareWiring.switch)
-//        println(s"systolicBlock2DVector(${i + 1})(${j - 1}).io.inputC.get($k) := systolicBlock2DVector($i)($j).io.outputC($k)")
-//    }
-//  }
 
   for(i <- 0 until arrayRow; j <- 0 until arrayCol; k <- 0 until numberOfPEs) {
 

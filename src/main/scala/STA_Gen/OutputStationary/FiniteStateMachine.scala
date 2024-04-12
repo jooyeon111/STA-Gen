@@ -9,41 +9,28 @@ class FiniteStateMachine (
 
   val io = IO(new Bundle {
 
-    //Task handshaking protocol
-    val valid = Input(Bool())
-    val task = Input(new Task)
-    val ready = Output(Bool())
+    //Task Queue
+    val valid: Bool = Input(Bool())
+    val task: Task = Input(new Task)
+    val ready: Bool = Output(Bool())
 
-    //Control signals
-    //Sram ream signal and skew buffer enable
-//    val sramReadEnable = Output(Bool())
-    val inputASramReadEnable = Output(Bool())
-    val inputBSramReadEnable = Output(Bool())
-//    val skewBufferEnableA = Output(Bool())
-//    val skewBufferEnableB = Output(Bool())
+    //Output
+    val inputASramReadEnable: Bool = Output(Bool())
+    val inputBSramReadEnable: Bool = Output(Bool())
 
-    //Systolic tensor array
     val partialSumReset: Vec[Vec[Bool]] = Output(Vec(arrayRow, Vec(arrayCol, Bool())))
     val propagateSignal: Vec[Vec[Bool]] = Output(Vec(arrayRow - 1, Vec(arrayCol - 1, Bool())))
 
-    //Dimension organizer
     val outputSelectionSignal: Vec[Bool] = Output(Vec(arrayRow + arrayCol - 1, Bool()))
-//    val deskewShiftEnable: Vec[Bool] = Output(Vec(arrayRow + arrayCol - 1, Bool()))
     val railwayMuxStartSignal: Bool = Output(Bool())
 
   })
 
   //Control signals control initialization
   //SRAM read enable
-//  io.sramReadEnable := false.B
+
   io.inputASramReadEnable := false.B
   io.inputBSramReadEnable := false.B
-
-//  val inputASramReadEnableCounter: ControlSynchronizerMultiple = Module (new ControlSynchronizerMultiple(0, ))
-
-  //skew buffer enable
-//  io.skewBufferEnableA := true.B
-//  io.skewBufferEnableB := true.B
 
   //Partial sum reset counter
   val partialSumResetCounterVector: Vector[Vector[ControlSynchronizerSingle]] =
@@ -77,24 +64,9 @@ class FiniteStateMachine (
     io.outputSelectionSignal(i) := outputSelectionSignalCounterVector(i).io.enable
   }
 
-
-  //Deskew buffer enable
-//  for (i <- 0 until arrayRow + arrayCol - 1)
-//    io.deskewShiftEnable(i) := true.B
-
-  //Railway signal
   val railwayMuxSignalCounter = Module(new ControlSynchronizerSingle(log2Ceil(vectorSize) + 4 + arrayRow))
   railwayMuxSignalCounter.io.start := false.B
   io.railwayMuxStartSignal := railwayMuxSignalCounter.io.enable
-
-  //dual shape modifier
-//  val dualShapeModifierCounter = Module(new ControlSynchronizerSingle(log2Ceil(vectorSize) + 5 + arrayRow))
-//  dualShapeModifierCounter.io.start := false.B
-//  io.dualShapeModifierStart := dualShapeModifierCounter.io.enable
-
-//  val shapeModifier4Counter = Module(new ControlSynchronizerMultiple(log2Ceil(vectorSize) + 5 + arrayRow, arrayCol + 1))
-//  shapeModifier4Counter.io.start := false.B
-//  io.shapeModifier4InputValid := shapeModifier4Counter.io.enable
 
   object State extends ChiselEnum {
     val waiting, loading, Continuous, error = Value
@@ -102,7 +74,6 @@ class FiniteStateMachine (
 
   val state = RegInit(State.waiting)
 
-  //ready signal generation
   io.ready := true.B
   val ceilingDivision = Module(new CeilingDivision)
   val loadingCounter = RegInit(0.U(32.W))
@@ -153,7 +124,6 @@ class FiniteStateMachine (
           outputSelectionSignalCounterVector(i).io.start := true.B
 
         railwayMuxSignalCounter.io.start := true.B
-//        shapeModifier4Counter.io.start := true.B
         state := State.Continuous
 
 
@@ -170,7 +140,6 @@ class FiniteStateMachine (
           outputSelectionSignalCounterVector(i).io.start := true.B
 
         railwayMuxSignalCounter.io.start := true.B
-//        shapeModifier4Counter.io.start := true.B
         state := State.waiting
 
       }.otherwise {
