@@ -1,7 +1,7 @@
 package STA_Gen.OutputStationary
 
 import chisel3._
-import STA_Gen.Submodule.{FifoSramReadVectorSimulation, SkewBufferVector, SystolicTensorArrayConfig, Task}
+import STA_Gen.Submodule.{FifoSramReadVectorSimulation, SystolicTensorArrayConfig, Task}
 
 class SystolicPodSimulation(
   val arrayRow: Int, val arrayCol : Int, val blockRow : Int, val blockCol : Int, val vectorSize : Int, taskQueueEntries: Int, shapeModifierEntries: Int  ,sramHexDirectoryName: String)  extends Module {
@@ -36,8 +36,8 @@ class SystolicPodSimulation(
   val systolicTensorArray = Module(new SystolicTensorArray(arrayRow, arrayCol, blockRow, blockCol, vectorSize))
   val fifoSramVectorA = Module(new FifoSramReadVectorSimulation(arrayRow, blockRow, vectorSize, 8, sramHexDirectoryName + "/InputAHex"))
   val fifoSramVectorB = Module(new FifoSramReadVectorSimulation(arrayCol, blockCol, vectorSize, 8, sramHexDirectoryName + "/InputBHex"))
-  val skewBufferA = Module(new SkewBufferVector(8, arrayRow, blockRow, vectorSize))
-  val skewBufferB = Module(new SkewBufferVector(8, arrayCol, blockCol, vectorSize))
+  val skewBufferA = Module(new SkewBuffer(arrayRow, blockRow, vectorSize))
+  val skewBufferB = Module(new SkewBuffer(arrayCol, blockCol, vectorSize))
   val PostProcessModule = Module(new PostProcessingUnit(arrayRow, arrayCol, blockRow, blockCol))
 
   //Input and output wiring
@@ -59,11 +59,11 @@ class SystolicPodSimulation(
   fifoSramVectorA.io.readEnable := controlLogic.io.inputASramReadEnable
   fifoSramVectorB.io.readEnable := controlLogic.io.inputBSramReadEnable
 
-  for (i <- 0 until arrayRow)
-    skewBufferA.io.shiftEnable(i) := controlLogic.io.skewBufferEnableA
-
-  for (i <- 0 until arrayCol)
-    skewBufferB.io.shiftEnable(i) := controlLogic.io.skewBufferEnableB
+//  for (i <- 0 until arrayRow)
+//    skewBufferA.io.shiftEnable(i) := controlLogic.io.skewBufferEnableA
+//
+//  for (i <- 0 until arrayCol)
+//    skewBufferB.io.shiftEnable(i) := controlLogic.io.skewBufferEnableB
 
   //Systolic array control wiring
   systolicTensorArray.io.partialSumReset := controlLogic.io.partialSumReset
@@ -71,7 +71,7 @@ class SystolicPodSimulation(
 
   //Dimension align module control wiring
   PostProcessModule.io.outputSelectionSignal := controlLogic.io.outputSelectionSignal
-  PostProcessModule.io.deskewShiftEnable := controlLogic.io.deskewShiftEnable
+//  PostProcessModule.io.deskewShiftEnable := controlLogic.io.deskewShiftEnable
   PostProcessModule.io.railwayMuxStartSignal := controlLogic.io.railwayMuxStartSignal
 //  PostProcessModule.io.shapeModifier4InputValid := controlLogic.io.shapeModifier4InputValid
 

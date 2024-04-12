@@ -22,7 +22,7 @@ class PostProcessingUnit(arrayRow: Int, arrayCol: Int, blockRow: Int, blockCol: 
     val outputSelectionSignal: Vec[Bool] = Input(Vec(arrayRow + arrayCol - 1, Bool()))
 
     //Deskew
-    val deskewShiftEnable: Vec[Bool] = Input(Vec(arrayRow + arrayCol - 1, Bool()))
+//    val deskewShiftEnable: Vec[Bool] = Input(Vec(arrayRow + arrayCol - 1, Bool()))
 
     //Railway
     val railwayMuxStartSignal: UInt = Input(Bool())
@@ -35,7 +35,7 @@ class PostProcessingUnit(arrayRow: Int, arrayCol: Int, blockRow: Int, blockCol: 
   *                                               Module assign
   * */
   val outputSelector = Module(new OutputSelector(arrayRow, arrayCol, blockRow, blockCol))
-  val deskewBufferVector = Module(new DeskewBufferVector(arrayRow, arrayCol, blockRow, blockCol))
+  val DeskewBuffer = Module(new DeskewBuffer(arrayRow, arrayCol, blockRow, blockCol))
   val railway = Module(new Railway(arrayRow, arrayCol, blockRow, blockCol))
 //  val ShapeModifier = Module(new ShapeModifier(arrayRow, arrayCol, blockRow, blockCol))
 //  val shapeModiifer4 = Module(new ShapeModifier4(arrayRow, arrayCol, blockRow, blockCol, queueEntries))
@@ -45,7 +45,7 @@ class PostProcessingUnit(arrayRow: Int, arrayCol: Int, blockRow: Int, blockCol: 
   * */
 
   outputSelector.io.selectionSignal := io.outputSelectionSignal
-  deskewBufferVector.io.shiftEnable := io.deskewShiftEnable
+//  DeskewBuffer.io.shiftEnable := io.deskewShiftEnable
   railway.io.start := io.railwayMuxStartSignal
 //  shapeModiifer4.io.inputValid := io.shapeModifier4InputValid
 //  io.shapeModifier4Ready := shapeModiifer4.io.moduleReady
@@ -55,8 +55,8 @@ class PostProcessingUnit(arrayRow: Int, arrayCol: Int, blockRow: Int, blockCol: 
   * */
 
   outputSelector.io.input := io.input
-  deskewBufferVector.io.input := outputSelector.io.output
-  railway.io.input := deskewBufferVector.io.output
+  DeskewBuffer.io.input := outputSelector.io.output
+  railway.io.input := DeskewBuffer.io.output
 //  shapeModiifer4.io.input := railway.io.output
 //  io.output := shapeModiifer4.io.output
   io.output := railway.io.output

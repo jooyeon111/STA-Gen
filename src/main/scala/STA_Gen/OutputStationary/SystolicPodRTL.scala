@@ -1,6 +1,6 @@
 package STA_Gen.OutputStationary
 
-import STA_Gen.Submodule.{FifoSramInputVectorRTL, SkewBufferVector, SystolicTensorArrayConfig, Task}
+import STA_Gen.Submodule.{FifoSramInputVectorRTL, SystolicTensorArrayConfig, Task}
 
 import chisel3._
 
@@ -46,8 +46,8 @@ class SystolicPodRTL(
   val systolicTensorArray = Module(new SystolicTensorArray(arrayRow, arrayCol, blockRow, blockCol, vectorSize))
   val fifoSramVectorA = Module(new FifoSramInputVectorRTL(arrayRow, blockRow, vectorSize))
   val fifoSramVectorB = Module(new FifoSramInputVectorRTL(arrayRow, blockRow, vectorSize))
-  val skewBufferA = Module(new SkewBufferVector(8, arrayRow, blockRow, vectorSize))
-  val skewBufferB = Module(new SkewBufferVector(8, arrayCol, blockCol, vectorSize))
+  val skewBufferA = Module(new SkewBuffer(arrayRow, blockRow, vectorSize))
+  val skewBufferB = Module(new SkewBuffer(arrayCol, blockCol, vectorSize))
   val PostProcessModule = Module(new PostProcessingUnit( arrayRow, arrayCol, blockRow, blockCol))
 
   //Input and output wiring
@@ -78,11 +78,11 @@ class SystolicPodRTL(
   fifoSramVectorA.io.readEnable := controlLogic.io.inputASramReadEnable
   fifoSramVectorB.io.readEnable := controlLogic.io.inputBSramReadEnable
 
-  for (i <- 0 until arrayRow)
-    skewBufferA.io.shiftEnable(i) := controlLogic.io.skewBufferEnableA
+//  for (i <- 0 until arrayRow)
+//    skewBufferA.io.shiftEnable(i) := controlLogic.io.skewBufferEnableA
 
-  for (i <- 0 until arrayCol)
-    skewBufferB.io.shiftEnable(i) := controlLogic.io.skewBufferEnableB
+//  for (i <- 0 until arrayCol)
+//    skewBufferB.io.shiftEnable(i) := controlLogic.io.skewBufferEnableB
 
   //Systolic array control wiring
   systolicTensorArray.io.partialSumReset := controlLogic.io.partialSumReset
@@ -90,7 +90,7 @@ class SystolicPodRTL(
 
   //Dimension align module control wiring
   PostProcessModule.io.outputSelectionSignal := controlLogic.io.outputSelectionSignal
-  PostProcessModule.io.deskewShiftEnable := controlLogic.io.deskewShiftEnable
+//  PostProcessModule.io.deskewShiftEnable := controlLogic.io.deskewShiftEnable
   PostProcessModule.io.railwayMuxStartSignal := controlLogic.io.railwayMuxStartSignal
 //  PostProcessModule.io.shapeModifier4InputValid := controlLogic.io.shapeModifier4InputValid
 

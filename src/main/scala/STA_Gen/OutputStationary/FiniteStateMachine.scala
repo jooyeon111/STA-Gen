@@ -19,8 +19,8 @@ class FiniteStateMachine (
 //    val sramReadEnable = Output(Bool())
     val inputASramReadEnable = Output(Bool())
     val inputBSramReadEnable = Output(Bool())
-    val skewBufferEnableA = Output(Bool())
-    val skewBufferEnableB = Output(Bool())
+//    val skewBufferEnableA = Output(Bool())
+//    val skewBufferEnableB = Output(Bool())
 
     //Systolic tensor array
     val partialSumReset: Vec[Vec[Bool]] = Output(Vec(arrayRow, Vec(arrayCol, Bool())))
@@ -28,7 +28,7 @@ class FiniteStateMachine (
 
     //Dimension organizer
     val outputSelectionSignal: Vec[Bool] = Output(Vec(arrayRow + arrayCol - 1, Bool()))
-    val deskewShiftEnable: Vec[Bool] = Output(Vec(arrayRow + arrayCol - 1, Bool()))
+//    val deskewShiftEnable: Vec[Bool] = Output(Vec(arrayRow + arrayCol - 1, Bool()))
     val railwayMuxStartSignal: Bool = Output(Bool())
 
   })
@@ -42,8 +42,8 @@ class FiniteStateMachine (
 //  val inputASramReadEnableCounter: ControlSynchronizerMultiple = Module (new ControlSynchronizerMultiple(0, ))
 
   //skew buffer enable
-  io.skewBufferEnableA := true.B
-  io.skewBufferEnableB := true.B
+//  io.skewBufferEnableA := true.B
+//  io.skewBufferEnableB := true.B
 
   //Partial sum reset counter
   val partialSumResetCounterVector: Vector[Vector[ControlSynchronizerSingle]] =
@@ -79,8 +79,8 @@ class FiniteStateMachine (
 
 
   //Deskew buffer enable
-  for (i <- 0 until arrayRow + arrayCol - 1)
-    io.deskewShiftEnable(i) := true.B
+//  for (i <- 0 until arrayRow + arrayCol - 1)
+//    io.deskewShiftEnable(i) := true.B
 
   //Railway signal
   val railwayMuxSignalCounter = Module(new ControlSynchronizerSingle(log2Ceil(vectorSize) + 4 + arrayRow))

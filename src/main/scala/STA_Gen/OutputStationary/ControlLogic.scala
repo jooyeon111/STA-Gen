@@ -28,8 +28,8 @@ class ControlLogic(val arrayRow: Int, val arrayCol : Int, val blockRow : Int, va
 //    val sramReadEnable = Output(Bool())
     val inputASramReadEnable = Output(Bool())
     val inputBSramReadEnable = Output(Bool())
-    val skewBufferEnableA = Output(Bool())
-    val skewBufferEnableB = Output(Bool())
+//    val skewBufferEnableA = Output(Bool())
+//    val skewBufferEnableB = Output(Bool())
 
     //Systolic arrays
     val propagateSignal: Vec[Vec[Bool]] = Output(Vec(arrayRow - 1, Vec(arrayCol - 1, Bool())))
@@ -37,7 +37,7 @@ class ControlLogic(val arrayRow: Int, val arrayCol : Int, val blockRow : Int, va
 
     //Dimension align module
     val outputSelectionSignal: Vec[Bool] = Output(Vec(arrayRow + arrayCol - 1, Bool()))
-    val deskewShiftEnable: Vec[Bool] = Output(Vec(arrayRow + arrayCol - 1, Bool()))
+//    val deskewShiftEnable: Vec[Bool] = Output(Vec(arrayRow + arrayCol - 1, Bool()))
     val railwayMuxStartSignal: Bool = Output(Bool())
 //    val dualShapeModifierStart: Bool = Output(Bool())
 //  val shapeModifier4InputValid = Output(Bool())
@@ -61,14 +61,14 @@ class ControlLogic(val arrayRow: Int, val arrayCol : Int, val blockRow : Int, va
 //  io.sramReadEnable := fsm.io.sramReadEnable
   io.inputASramReadEnable := fsm.io.inputASramReadEnable
   io.inputBSramReadEnable := fsm.io.inputBSramReadEnable
-  io.skewBufferEnableA := fsm.io.skewBufferEnableA
-  io.skewBufferEnableB := fsm.io.skewBufferEnableB
+//  io.skewBufferEnableA := fsm.io.skewBufferEnableA
+//  io.skewBufferEnableB := fsm.io.skewBufferEnableB
 
   io.propagateSignal := fsm.io.propagateSignal
   io.partialSumReset := fsm.io.partialSumReset
 
   io.outputSelectionSignal := fsm.io.outputSelectionSignal
-  io.deskewShiftEnable := fsm.io.deskewShiftEnable
+//  io.deskewShiftEnable := fsm.io.deskewShiftEnable
   io.railwayMuxStartSignal := fsm.io.railwayMuxStartSignal
 //  io.shapeModifier4InputValid := fsm.io.shapeModifier4InputValid
 }

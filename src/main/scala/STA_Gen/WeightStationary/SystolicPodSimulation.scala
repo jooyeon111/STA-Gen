@@ -1,6 +1,7 @@
 package STA_Gen.WeightStationary
 
-import STA_Gen.Submodule.{FifoSramReadVectorSimulation, SkewBufferVector, SystolicTensorArrayConfig, Task}
+import STA_Gen.OutputStationary.SkewBuffer
+import STA_Gen.Submodule.{FifoSramReadVectorSimulation, SystolicTensorArrayConfig, Task}
 import chisel3._
 
 class SystolicPodSimulation (
@@ -38,9 +39,9 @@ class SystolicPodSimulation (
   val controlLogic = Module(new ControlLogic(arrayRow, arrayCol, blockRow, blockCol, vectorSize, taskQueueEntries))
   val fifoSramVectorA = Module(new FifoSramReadVectorSimulation(arrayRow, blockRow, vectorSize, 8, "src/main/resources/" + sramHexDirectoryName + "/InputAHex"))
   val fifoSramVectorB = Module(new FifoSramReadVectorSimulation(arrayCol, blockCol, vectorSize, 8, "src/main/resources/" + sramHexDirectoryName + "/InputBHex"))
-  val skewBufferA = Module(new SkewBufferVector(8, arrayRow, blockRow, vectorSize))
+  val skewBufferA = Module(new SkewBuffer(arrayRow, blockRow, vectorSize))
   val systolicTensorArray = Module(new SystolicTensorArray(arrayRow, arrayCol, blockRow, blockCol, vectorSize))
-  val outputDeskewBufferVector: DeskewBufferVector = Module(new DeskewBufferVector(arrayCol, blockCol))
+  val outputDeskewBuffer: DeskewBuffer = Module(new DeskewBuffer(arrayCol, blockCol))
 
   //input and output wiring
 
@@ -53,22 +54,22 @@ class SystolicPodSimulation (
   systolicTensorArray.io.inputA := skewBufferA.io.output
   systolicTensorArray.io.inputB := RegNext(fifoSramVectorB.io.readData, RegInit(VecInit(Seq.fill(numberOfInputB)(0.S(8.W)))))
 
-  outputDeskewBufferVector.io.input := systolicTensorArray.io.outputC
-  io.output := outputDeskewBufferVector.io.output
+  outputDeskewBuffer.io.input := systolicTensorArray.io.outputC
+  io.output := outputDeskewBuffer.io.output
 
 
 
   //control logic wiring
   fifoSramVectorA.io.readEnable := controlLogic.io.sramReadEnableA
   fifoSramVectorB.io.readEnable := controlLogic.io.sramReadEnableB
-
-  for( i <- 0 until arrayRow)
-    skewBufferA.io.shiftEnable(i) := controlLogic.io.skewBufferEnableA
+//
+//  for( i <- 0 until arrayRow)
+//    skewBufferA.io.shiftEnable(i) := controlLogic.io.skewBufferEnableA
 
   systolicTensorArray.io.propagateWeight := controlLogic.io.propagateSignal
 
-  for (i <- 0 until arrayRow)
-    outputDeskewBufferVector.io.shiftEnable(i) := controlLogic.io.deskewEnable
+//  for (i <- 0 until arrayRow)
+//    outputDeskewBuffer.io.shiftEnable(i) := controlLogic.io.deskewEnable
 
 }
 

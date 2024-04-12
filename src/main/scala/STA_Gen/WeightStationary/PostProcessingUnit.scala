@@ -24,13 +24,13 @@ class PostProcessingUnit(val arrayRow: Int, val arrayCol : Int, val blockRow : I
 
 
   val outputSelector = Module( new OutputSelector(arrayRow, arrayCol, blockRow, blockCol) )
-  val deskewBufferVector = Module(new DeskewBufferVector(arrayCol, blockCol))
+  val DeskewBuffer = Module(new DeskewBuffer(arrayCol, blockCol))
 
   outputSelector.io.selectionSignal := io.selectionSignal
-  deskewBufferVector.io.shiftEnable := io.deskewEnable
+//  DeskewBuffer.io.shiftEnable := io.deskewEnable
 
   outputSelector.io.input := io.input
-  deskewBufferVector.io.input :=  outputSelector.io.output
-  io.output := deskewBufferVector.io.output
+  DeskewBuffer.io.input :=  outputSelector.io.output
+  io.output := DeskewBuffer.io.output
 
 }
