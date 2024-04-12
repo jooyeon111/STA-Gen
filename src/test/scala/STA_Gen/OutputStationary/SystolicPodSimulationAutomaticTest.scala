@@ -23,8 +23,8 @@ class SystolicPodSimulationAutomaticTest extends AnyFlatSpec with ChiselScalates
       val taskVector = mapper.taskVector
       val sramHexFileWriter = new SramHexFileWriter(mapper)
 
+      mapper.printTargetMatrix()
       sramHexFileWriter.createHexFileOutputStationarySimulation()
-
 
       test(new SystolicPodSimulation(targetConfiguration, taskVector.length, 12, sramHexFileWriter.targetDirectory)).withAnnotations(Seq(WriteVcdAnnotation)) { pod =>
 
@@ -57,3 +57,5 @@ class SystolicPodSimulationAutomaticTest extends AnyFlatSpec with ChiselScalates
 
   }
 }
+
+

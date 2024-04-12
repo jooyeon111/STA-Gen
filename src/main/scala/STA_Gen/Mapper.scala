@@ -31,9 +31,7 @@ class Mapper(val gemm: GemmDimension, config: SystolicTensorArrayConfig) {
     reshapeInputMatrixB(new Matrix(B.matrixElements.transpose), colMultiplication, iterationB)
       .matrixElements.map(row => row.mkString(System.lineSeparator()))
 
-  printTargetMatrix()
-
-  private def printTargetMatrix(): Unit = {
+  def printTargetMatrix(): Unit = {
     println(" Matrix A ")
     A.printMatrix
     println(" Matrix B ")

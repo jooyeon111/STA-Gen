@@ -1,20 +1,20 @@
-package STA_Gen.WeightStationary
-
-import chisel3._
-import chiseltest._
-import org.scalatest.flatspec.AnyFlatSpec
-import STA_Gen.Submodule.SystolicTensorArrayConfig
-import STA_Gen.{ConfigurationParser, GemmDimension, GemmDimensionParser, Mapper, SramHexFileWriter}
-
-class SystolicPodSimulationAutomaticTest extends AnyFlatSpec with ChiselScalatestTester   {
-
-  val configurationParser = new ConfigurationParser
-  val gemmDimensionParser = new GemmDimensionParser
-
-  if(configurationParser.getDataflow == "Ws"){
-
-    behavior of "Systolic pod"
-    it should "calculate GEMMs {M,N,K} with config {array row, array col, block row, block col, vector size} systolic tensor array" in {
+//package STA_Gen.WeightStationary
+//
+//import chisel3._
+//import chiseltest._
+//import org.scalatest.flatspec.AnyFlatSpec
+//import STA_Gen.Submodule.SystolicTensorArrayConfig
+//import STA_Gen.{ConfigurationParser, GemmDimension, GemmDimensionParser, Mapper, SramHexFileWriter}
+//
+//class SystolicPodSimulationAutomaticTest extends AnyFlatSpec with ChiselScalatestTester   {
+//
+//  val configurationParser = new ConfigurationParser
+//  val gemmDimensionParser = new GemmDimensionParser
+//
+//  if(configurationParser.getDataflow == "Ws"){
+//
+//    behavior of "Systolic pod"
+//    it should "calculate GEMMs {M,N,K} with config {array row, array col, block row, block col, vector size} systolic tensor array" in {
 
       //    val targetGemm = GemmDimension(16,16,16)
       //    val targetConfiguration = SystolicTensorArrayConfig(4,3,4,3,4)
@@ -52,6 +52,6 @@ class SystolicPodSimulationAutomaticTest extends AnyFlatSpec with ChiselScalates
       //
       //    }
       //    sramHexFileWriter.deleteHexFileOutputStationarySimulation()
-    }
-  }
-}
+//    }
+//  }
+//}

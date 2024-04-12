@@ -25,10 +25,10 @@ class DeskewBufferVector(arrayRow: Int, arrayCol: Int, blockRow: Int, blockCol: 
   * */
   val skewVector: Vector[MyShiftRegister] =
     Vector.tabulate(arrayRow + arrayCol - 1)(x => if (x < arrayRow - 1) {
-      Module(new MyShiftRegister(32, blockRow * blockCol, arrayRow - x))
+      Module(new MyShiftRegister(32, blockRow * blockCol, arrayRow - x - 1))
     }
     else {
-      Module(new MyShiftRegister(32, blockRow * blockCol, 1))
+      Module(new MyShiftRegister(32, blockRow * blockCol, 0))
     })
 
   /*

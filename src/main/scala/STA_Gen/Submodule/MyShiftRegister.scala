@@ -6,7 +6,7 @@ import chisel3.util.ShiftRegister
 class MyShiftRegister(bandwidth: Int, inputSize: Int, depthSize: Int) extends Module{
 
   require(inputSize >= 1, s"[error] Shift register input size must be at least 1 current value: $inputSize")
-  require(depthSize >= 1, s"[error] Shift register depth size must be at least 1 current value: $depthSize")
+//  require(depthSize >= 1, s"[error] Shift register depth size must be at least 1 current value: $depthSize")
 
   val io = IO(new Bundle {
 

@@ -30,8 +30,6 @@ class FiniteStateMachine (
     val outputSelectionSignal: Vec[Bool] = Output(Vec(arrayRow + arrayCol - 1, Bool()))
     val deskewShiftEnable: Vec[Bool] = Output(Vec(arrayRow + arrayCol - 1, Bool()))
     val railwayMuxStartSignal: Bool = Output(Bool())
-//    val dualShapeModifierStart: Bool = Output(Bool())
-//    val shapeModifier4InputValid = Output(Bool())
 
   })
 
@@ -85,7 +83,7 @@ class FiniteStateMachine (
     io.deskewShiftEnable(i) := true.B
 
   //Railway signal
-  val railwayMuxSignalCounter = Module(new ControlSynchronizerSingle(log2Ceil(vectorSize) + 5 + arrayRow))
+  val railwayMuxSignalCounter = Module(new ControlSynchronizerSingle(log2Ceil(vectorSize) + 4 + arrayRow))
   railwayMuxSignalCounter.io.start := false.B
   io.railwayMuxStartSignal := railwayMuxSignalCounter.io.enable
 
