@@ -63,7 +63,7 @@ class SystolicPodSimulation(
   systolicTensorArray.io.propagateSignal := controlLogic.io.propagateSignal
 
 
-  PostProcessModule.io.outputSelectionSignal := controlLogic.io.outputSelectionSignal
+//  PostProcessModule.io.outputSelectionSignal := controlLogic.io.outputSelectionSignal
   PostProcessModule.io.railwayMuxStartSignal := controlLogic.io.railwayMuxStartSignal
 
 }

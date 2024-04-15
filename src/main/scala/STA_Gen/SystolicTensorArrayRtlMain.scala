@@ -5,7 +5,6 @@ import circt.stage.ChiselStage
 object SystolicTensorArrayRtlMain extends App{
 
   val configurationParser = new ConfigurationParser
-  val gemmDimensionParser = new GemmDimensionParser
   val taskQueueEntries = 10
 
   ChiselStage.emitSystemVerilog(

@@ -85,7 +85,7 @@ class SystolicPodRTL(
   systolicTensorArray.io.propagateSignal := controlLogic.io.propagateSignal
 
   //Dimension align module control wiring
-  PostProcessModule.io.outputSelectionSignal := controlLogic.io.outputSelectionSignal
+//  PostProcessModule.io.outputSelectionSignal := controlLogic.io.outputSelectionSignal
   PostProcessModule.io.railwayMuxStartSignal := controlLogic.io.railwayMuxStartSignal
 
 }

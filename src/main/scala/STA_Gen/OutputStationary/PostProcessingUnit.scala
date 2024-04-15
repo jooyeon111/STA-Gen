@@ -19,7 +19,7 @@ class PostProcessingUnit(arrayRow: Int, arrayCol: Int, blockRow: Int, blockCol: 
     val input: Vec[SInt] = Input(Vec(numberOfInputs, SInt(32.W)))
 
     //Control
-    val outputSelectionSignal: Vec[Bool] = Input(Vec(arrayRow + arrayCol - 1, Bool()))
+//    val outputSelectionSignal: Vec[Bool] = Input(Vec(arrayRow + arrayCol - 1, Bool()))
     val railwayMuxStartSignal: UInt = Input(Bool())
 
     //Output
@@ -30,24 +30,26 @@ class PostProcessingUnit(arrayRow: Int, arrayCol: Int, blockRow: Int, blockCol: 
   /*
   *                                               Module assign
   * */
-  val outputSelector = Module(new OutputSelector(arrayRow, arrayCol, blockRow, blockCol))
-  val DeskewBuffer = Module(new DeskewBuffer(arrayRow, arrayCol, blockRow, blockCol))
+//  val outputSelector = Module(new OutputSelector(arrayRow, arrayCol, blockRow, blockCol))
+  val deskewBuffer = Module(new DeskewBuffer(arrayRow, arrayCol, blockRow, blockCol))
   val railway = Module(new Railway(arrayRow, arrayCol, blockRow, blockCol))
 
   /*
   *                                            Control signal wiring
   * */
 
-  outputSelector.io.selectionSignal := io.outputSelectionSignal
+//  outputSelector.io.selectionSignal := io.outputSelectionSignal
   railway.io.start := io.railwayMuxStartSignal
 
   /*
   *                                          Input and output wiring
   * */
 
-  outputSelector.io.input := io.input
-  DeskewBuffer.io.input := outputSelector.io.output
-  railway.io.input := DeskewBuffer.io.output
+//  outputSelector.io.input := io.input
+//  DeskewBuffer.io.input := outputSelector.io.output
+
+  deskewBuffer.io.input := io.input
+  railway.io.input := deskewBuffer.io.output
   io.output := railway.io.output
 
 }

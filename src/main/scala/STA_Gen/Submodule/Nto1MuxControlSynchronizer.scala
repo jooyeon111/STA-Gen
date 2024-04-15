@@ -12,7 +12,6 @@ class Nto1MuxControlSynchronizer(numberOfTargetInput: Int) extends Module{
     val muxSignal = Output(UInt(muxSignalBits.W))
   })
 
-
   val subModuleVector: Vector[Nto1MuxControlSynchronizerSubModule] =
     Vector.tabulate(numberOfTargetInput)(x => Module(new Nto1MuxControlSynchronizerSubModule(numberOfTargetInput, numberOfTargetInput - x - 1)))
 

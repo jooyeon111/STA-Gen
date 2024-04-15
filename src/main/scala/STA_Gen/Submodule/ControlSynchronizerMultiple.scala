@@ -5,7 +5,7 @@ import chisel3.util.ShiftRegister
 
 class ControlSynchronizerMultiple(period: Int, maintain: Int = 1) extends Module{
 
-//  require(period >=2, "[error] control synchronizer needs at least 2 period" )
+//  override val desiredName = s"Control_synchronizer_$maintain"
 
   val io = IO(new Bundle {
     val start = Input(Bool())
