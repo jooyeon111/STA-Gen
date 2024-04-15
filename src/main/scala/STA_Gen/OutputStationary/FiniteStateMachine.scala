@@ -2,7 +2,7 @@ package STA_Gen.OutputStationary
 
 import chisel3._
 import chisel3.util.{is, log2Ceil, switch}
-import STA_Gen.Submodule.{CeilingDivision, ControlSynchronizerMultiple, Task}
+import STA_Gen.Submodule.{CeilingDivision, ControlSynchronizer, Task}
 
 class FiniteStateMachine (
   val arrayRow: Int, val arrayCol : Int, val blockRow : Int, val blockCol : Int, val vectorSize : Int)  extends Module {
@@ -21,7 +21,6 @@ class FiniteStateMachine (
     val partialSumReset: Vec[Vec[Bool]] = Output(Vec(arrayRow, Vec(arrayCol, Bool())))
     val propagateSignal: Vec[Vec[Bool]] = Output(Vec(arrayRow - 1, Vec(arrayCol - 1, Bool())))
 
-//    val outputSelectionSignal: Vec[Bool] = Output(Vec(arrayRow + arrayCol - 1, Bool()))
     val railwayMuxStartSignal: Bool = Output(Bool())
 
   })
@@ -35,17 +34,17 @@ class FiniteStateMachine (
   io.inputBSramReadEnable := false.B
 
   //Partial sum reset counter
-  val partialSumResetCounterVector: Vector[Vector[ControlSynchronizerMultiple]] =
-    Vector.tabulate(arrayRow, arrayCol)( (x,y) => {Module(new ControlSynchronizerMultiple( log2Ceil(vectorSize) + essentialWaitingTime + x + y ))})
+  val partialSumResetCounterVector: Vector[Vector[ControlSynchronizer]] =
+    Vector.tabulate(arrayRow, arrayCol)( (x,y) => {Module(new ControlSynchronizer( log2Ceil(vectorSize) + essentialWaitingTime + x + y ))})
 
   for(i <- 0 until arrayRow ; j <- 0 until arrayCol) {
     partialSumResetCounterVector(i)(j).io.start := false.B
     io.partialSumReset(i)(j) := partialSumResetCounterVector(i)(j).io.enable
   }
 
-  //propagate signal counter2
-  val propagateSignalCounterVector: Vector[Vector[ControlSynchronizerMultiple]] =
-    Vector.tabulate(arrayRow - 1, arrayCol - 1) ( (x,y) => Module( new ControlSynchronizerMultiple(log2Ceil(vectorSize) + (essentialWaitingTime + 2)  + x + y, Math.min(x, arrayCol - 1 - y) + 1 )))
+  //propagate signal counter
+  val propagateSignalCounterVector: Vector[Vector[ControlSynchronizer]] =
+    Vector.tabulate(arrayRow - 1, arrayCol - 1) ( (x,y) => Module( new ControlSynchronizer(log2Ceil(vectorSize) + (essentialWaitingTime + 2)  + x + y, Math.min(x, arrayCol - 1 - y) + 1 )))
 
 
   for (i <- 0 until arrayRow - 1; j <- 0 until arrayCol - 1) {
@@ -53,21 +52,8 @@ class FiniteStateMachine (
     io.propagateSignal(i)(j) := propagateSignalCounterVector(i)(j).io.enable
   }
 
-
-  //output select signal counter
-//  val outputSelectionSignalCounterVector: Vector[ControlSynchronizerMultiple] =
-//    Vector.tabulate(arrayRow + arrayCol - 1)( x => if (x < arrayRow )
-//      Module (new ControlSynchronizerMultiple( log2Ceil(vectorSize) + (essentialWaitingTime + 1) + x, x + 1))
-//    else Module (new ControlSynchronizerMultiple(log2Ceil(vectorSize) + (essentialWaitingTime + 1) + x , arrayRow + arrayCol - 1 - x )))
-//
-//
-//  for( i <- 0 until arrayRow + arrayCol - 1){
-//    outputSelectionSignalCounterVector(i).io.start := false.B
-//    io.outputSelectionSignal(i) := outputSelectionSignalCounterVector(i).io.enable
-//  }
-
-  //railway
-  val railwayMuxSignalCounter = Module(new ControlSynchronizerMultiple(log2Ceil(vectorSize) + essentialWaitingTime - 1 + arrayRow))
+  //railway signal counter
+  val railwayMuxSignalCounter = Module(new ControlSynchronizer(log2Ceil(vectorSize) + essentialWaitingTime - 1 + arrayRow))
   railwayMuxSignalCounter.io.start := false.B
   io.railwayMuxStartSignal := railwayMuxSignalCounter.io.enable
 
@@ -123,9 +109,6 @@ class FiniteStateMachine (
         for (i <- 0 until arrayRow - 1; j <- 0 until arrayCol - 1)
           propagateSignalCounterVector(i)(j).io.start := true.B
 
-//        for (i <- 0 until arrayRow + arrayCol - 1)
-//          outputSelectionSignalCounterVector(i).io.start := true.B
-
         railwayMuxSignalCounter.io.start := true.B
         state := State.Continuous
 
@@ -138,9 +121,6 @@ class FiniteStateMachine (
 
         for (i <- 0 until arrayRow - 1; j <- 0 until arrayCol - 1)
           propagateSignalCounterVector(i)(j).io.start := true.B
-
-//        for (i <- 0 until arrayRow + arrayCol - 1)
-//          outputSelectionSignalCounterVector(i).io.start := true.B
 
         railwayMuxSignalCounter.io.start := true.B
         state := State.waiting

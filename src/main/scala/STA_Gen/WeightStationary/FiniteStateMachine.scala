@@ -2,7 +2,7 @@ package STA_Gen.WeightStationary
 
 import chisel3._
 import chisel3.util.{is, switch}
-import STA_Gen.Submodule.{CeilingDivision, ControlSynchronizerMultiple, Task}
+import STA_Gen.Submodule.{CeilingDivision, ControlSynchronizer, Task}
 
 class FiniteStateMachine ( val arrayRow: Int, val arrayCol : Int, val blockRow : Int, val blockCol : Int, val vectorSize : Int)  extends Module{
 
@@ -28,8 +28,8 @@ class FiniteStateMachine ( val arrayRow: Int, val arrayCol : Int, val blockRow :
   })
 
 
-  val propagateSignalCounterVector: Vector[ControlSynchronizerMultiple] =
-    Vector.tabulate(arrayRow)( x => Module(new ControlSynchronizerMultiple(arrayRow - x)))
+  val propagateSignalCounterVector: Vector[ControlSynchronizer] =
+    Vector.tabulate(arrayRow)( x => Module(new ControlSynchronizer(arrayRow - x)))
 
   for( i <- 0 until arrayRow){
     propagateSignalCounterVector(i).io.start := false.B

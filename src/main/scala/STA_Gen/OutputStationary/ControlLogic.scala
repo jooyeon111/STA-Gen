@@ -33,7 +33,6 @@ class ControlLogic(val arrayRow: Int, val arrayCol : Int, val blockRow : Int, va
     val partialSumReset: Vec[Vec[Bool]] = Output(Vec(arrayRow, Vec(arrayCol, Bool())))
 
     //Post processing control signals
-//    val outputSelectionSignal: Vec[Bool] = Output(Vec(arrayRow + arrayCol - 1, Bool()))
     val railwayMuxStartSignal: Bool = Output(Bool())
 
   })
@@ -55,7 +54,6 @@ class ControlLogic(val arrayRow: Int, val arrayCol : Int, val blockRow : Int, va
   io.propagateSignal := fsm.io.propagateSignal
   io.partialSumReset := fsm.io.partialSumReset
 
-//  io.outputSelectionSignal := fsm.io.outputSelectionSignal
   io.railwayMuxStartSignal := fsm.io.railwayMuxStartSignal
 
 }

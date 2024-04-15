@@ -2,7 +2,7 @@ package STA_Gen.Submodule
 
 import chisel3._
 
-class ControlSynchronizerMultipleSubModule extends Module {
+class ControlSynchronizerSubModule extends Module {
 
   val io = IO(new Bundle {
     val serialInput = Input(Bool())
